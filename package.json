@@ -12,6 +12,12 @@
     "typescript": "^5"
   },
   "dependencies": {
+    "@ai-sdk/gateway": "^3.0.122",
+    "@ai-sdk/vue": "^3.0.194",
+    "@comark/nuxt": "^0.3.1",
+    "@comark/vue": "^0.3.1",
+    "@nuxt/ui": "^4.8.1",
+    "ai": "^6.0.194",
     "hono": "^4.12.23",
     "vue": "^3.5.35"
   },

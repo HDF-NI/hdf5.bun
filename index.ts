@@ -6,6 +6,77 @@ import { join } from "path";
 
 const app = new Hono();
 
+const openApiSpec = {
+  openapi: "3.0.3",
+  info: {
+    title: "HDF5 Bun API",
+    version: "1.0.0",
+    description: "API for HDF5 inspection, version checks, file listing, and deep structure traversal."
+  },
+  servers: [{ url: "http://localhost:3000" }],
+  paths: {
+    "/api/inspect": {
+      post: {
+        summary: "Validate and open an HDF5 file",
+        requestBody: {
+          required: true,
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                required: ["path"],
+                properties: {
+                  path: { type: "string", description: "Absolute file path to the HDF5 file." }
+                }
+              }
+            }
+          }
+        },
+        responses: {
+          "200": { description: "Inspection result" },
+          "400": { description: "Missing file path parameter" },
+          "500": { description: "Internal server error" }
+        }
+      }
+    },
+    "/api/version": {
+      get: {
+        summary: "Get linked HDF5 library version",
+        responses: {
+          "200": { description: "Version payload" }
+        }
+      }
+    },
+    "/api/files": {
+      get: {
+        summary: "List HDF5 files from configured directory",
+        responses: {
+          "200": { description: "List of files" },
+          "500": { description: "Directory read error" }
+        }
+      }
+    },
+    "/api/structure-deep": {
+      get: {
+        summary: "Get deep recursive structure with attributes",
+        parameters: [
+          {
+            name: "path",
+            in: "query",
+            required: true,
+            schema: { type: "string" },
+            description: "Absolute file path to the HDF5 file."
+          }
+        ],
+        responses: {
+          "200": { description: "Deep structure payload" },
+          "400": { description: "Missing path query" }
+        }
+      }
+    }
+  }
+};
+
 console.log("[Bun] Reading raw C source file dynamically...");
 
 const cSourcePath = join(import.meta.dir, "test_h5.c");
@@ -126,48 +197,180 @@ app.get("/api/structure-deep", (c) => {
   }
 
   const rawString = new TextDecoder().decode(outputBuffer).replace(/\0/g, "");
-  const flatNodes = rawString.split(";")
-    .filter(row => row.includes("|"))
-    .map(row => {
-      const [fullPath, type] = row.split("|");
-      return { fullPath, type };
+  type Hdf5Attribute = {
+    name: string;
+    valueType: "Integer" | "Float" | "String" | "Unsupported";
+    value: string | number | Array<string | number> | null;
+  };
+
+  type FlatNode = {
+    fullPath: string;
+    type: string;
+    attributes?: Hdf5Attribute[];
+  };
+
+  type TreeNode = {
+    name: string;
+    type: string;
+    fullPath: string;
+    attributes: Hdf5Attribute[];
+    children?: TreeNode[];
+  };
+
+  const parserWarnings: string[] = [];
+
+  const parseFlatNode = (line: string): FlatNode | null => {
+    try {
+      const parsed = JSON.parse(line) as Partial<FlatNode>;
+      if (typeof parsed.fullPath !== "string" || typeof parsed.type !== "string") {
+        parserWarnings.push("Skipped a node record missing fullPath/type.");
+        return null;
+      }
+
+      const attributes = Array.isArray(parsed.attributes) ? parsed.attributes : [];
+      return {
+        fullPath: parsed.fullPath,
+        type: parsed.type,
+        attributes
+      };
+    } catch {
+      parserWarnings.push("Skipped a malformed JSON node record.");
+      return null;
+    }
+  };
+
+  const nonEmptyLines = rawString
+    .split("\n")
+    .map(line => line.trim())
+    .filter(line => line.length > 0);
+
+  const flatNodes: FlatNode[] = nonEmptyLines
+    .map(parseFlatNode)
+    .filter((node): node is FlatNode => node !== null);
+
+  if (flatNodes.length !== itemCount) {
+    parserWarnings.push(`Node count mismatch: C reported ${itemCount}, parsed ${flatNodes.length}.`);
+  }
+
+  const ensureChildren = (node: TreeNode) => {
+    if (!node.children) {
+      node.children = [];
+    }
+    return node.children;
+  };
+
+  // Build parent-child links from fullPath while preserving attributes for every group/dataset node.
+  const buildNestedTree = (nodes: FlatNode[]): TreeNode => {
+    const root: TreeNode = { name: "/", type: "Group", fullPath: "/", attributes: [], children: [] };
+    const nodeMap = new Map<string, TreeNode>([["/", root]]);
+
+    const getOrCreateNode = (fullPath: string, fallbackType: string): TreeNode => {
+      const normalizedPath = fullPath === "" ? "/" : fullPath;
+      const existing = nodeMap.get(normalizedPath);
+      if (existing) {
+        if (!existing.type || existing.type === "Unknown") {
+          existing.type = fallbackType;
+        }
+        return existing;
+      }
+
+      const parts = normalizedPath.split("/").filter(Boolean);
+      let name: string = "/";
+      if (normalizedPath !== "/") {
+        name = parts.length > 0 ? parts[parts.length - 1]! : normalizedPath;
+      }
+      const newNode: TreeNode = {
+        name,
+        type: fallbackType,
+        fullPath: normalizedPath,
+        attributes: [],
+        children: fallbackType === "Dataset" ? undefined : []
+      };
+
+      nodeMap.set(normalizedPath, newNode);
+      return newNode;
+    };
+
+    const linkChildToParent = (node: TreeNode) => {
+      if (node.fullPath === "/") return;
+      const segments = node.fullPath.split("/").filter(Boolean);
+      const parentPath = segments.length <= 1 ? "/" : segments.slice(0, -1).join("/");
+      const parent = getOrCreateNode(parentPath, "Group");
+      const children = ensureChildren(parent);
+      if (!children.some(child => child.fullPath === node.fullPath)) {
+        children.push(node);
+      }
+    };
+
+    nodes.forEach((flatNode) => {
+      const node = getOrCreateNode(flatNode.fullPath, flatNode.type || "Unknown");
+      node.type = flatNode.type || node.type;
+      node.attributes = flatNode.attributes ?? [];
+
+      if (node.type !== "Dataset") {
+        ensureChildren(node);
+      } else {
+        node.children = undefined;
+      }
+
+      // Ensure each ancestor path exists as a group.
+      const segments = flatNode.fullPath.split("/").filter(Boolean);
+      for (let i = 1; i <= segments.length; i++) {
+        const ancestorPath = segments.slice(0, i).join("/");
+        const ancestorNode = getOrCreateNode(ancestorPath, i === segments.length ? node.type : "Group");
+        if (i < segments.length) {
+          ancestorNode.type = "Group";
+          ensureChildren(ancestorNode);
+        }
+        linkChildToParent(ancestorNode);
+      }
+
+      linkChildToParent(node);
     });
 
-  // 🛠️ Helper to convert flat paths ("group/subgroup/dataset") into a real nested JSON object tree
-  const buildNestedTree = (nodes: Array<{ fullPath: string; type: string }>) => {
-    const root: any = { name: "/", type: "Group", children: [] };
-
-    nodes.forEach(node => {
-      const parts = node.fullPath.split("/");
-      let currentLevel = root.children;
-
-      parts.forEach((part, index) => {
-        const isLast = index === parts.length - 1;
-        let existingPath = currentLevel.find((p: any) => p.name === part);
-
-        if (!existingPath) {
-          existingPath = {
-            name: part,
-            type: isLast ? node.type : "Group",
-            fullPath: parts.slice(0, index + 1).join("/"),
-            children: isLast && node.type === "Dataset" ? undefined : []
-          };
-          currentLevel.push(existingPath);
-        }
-        if (existingPath.children) {
-          currentLevel = existingPath.children;
-        }
-      });
-    });
     return root;
   };
 
   return c.json({
     success: true,
+    schemaVersion: "2",
     fileName: filepath.split("/").pop(),
     itemCount: itemCount,
+    parsedNodeCount: flatNodes.length,
+    warnings: Array.from(new Set(parserWarnings)),
     rootNode: buildNestedTree(flatNodes)
   });
+});
+
+app.get("/openapi.json", (c) => {
+  return c.json(openApiSpec);
+});
+
+app.get("/docs", (c) => {
+  return c.html(`<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>HDF5 Bun API Docs</title>
+    <link rel="stylesheet" href="https://unpkg.com/swagger-ui-dist@5/swagger-ui.css" />
+  </head>
+  <body>
+    <div id="swagger-ui"></div>
+    <script src="https://unpkg.com/swagger-ui-dist@5/swagger-ui-bundle.js"></script>
+    <script>
+      window.onload = function () {
+        window.SwaggerUIBundle({
+          url: '/openapi.json',
+          dom_id: '#swagger-ui',
+          deepLinking: true,
+          presets: [window.SwaggerUIBundle.presets.apis],
+          layout: 'BaseLayout'
+        });
+      };
+    </script>
+  </body>
+</html>`);
 });
 
 // 3. Serve Vue frontend production build assets
