@@ -8,7 +8,7 @@ bun install
 
 To run:
 
-Edit the .env to set native hdf5 library directory ```HDF5_ROOT``` and directory ```HDF5_DATA_DIR``` with h5 files of interest.
+Edit the .env to set native hdf5 library directory ```HDF5_ROOT``` and data directory ```HDF5_DATA_DIR``` with h5 files of interest.
 
 
 ```bash
