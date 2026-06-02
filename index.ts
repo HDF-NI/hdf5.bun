@@ -1,6 +1,7 @@
 import { Hono } from "hono";
 import { serveStatic } from "hono/bun";
 import { cc, ptr } from "bun:ffi";
+import { existsSync } from "node:fs";
 import { readdir } from "node:fs/promises";
 import { join } from "path";
 
@@ -80,17 +81,44 @@ const openApiSpec = {
 console.log("[Bun] Reading raw C source file dynamically...");
 
 const cSourcePath = join(import.meta.dir, "test_h5.c");
-const HDF5_DATA_DIR = "/home/roger/BunProjects/examples"; 
+const defaultHdf5Root = "/home/roger/Software/hdf5-1_10_5/dist";
+const hdf5Root = Bun.env.HDF5_ROOT ?? defaultHdf5Root;
+const hdf5IncludeDir = Bun.env.HDF5_INCLUDE_DIR ?? join(hdf5Root, "include");
+const hdf5LibDir = Bun.env.HDF5_LIB_DIR ?? join(hdf5Root, "lib");
+const hdf5Library = Bun.env.HDF5_LIBRARY ?? "hdf5";
+const HDF5_DATA_DIR = Bun.env.HDF5_DATA_DIR ?? "/home/roger/BunProjects/examples";
+
+console.log(`[Bun] HDF5 include dir: ${hdf5IncludeDir}`);
+console.log(`[Bun] HDF5 lib dir: ${hdf5LibDir}`);
+console.log(`[Bun] HDF5 library: ${hdf5Library}`);
+
+const assertPathExists = (label: string, targetPath: string) => {
+  if (!existsSync(targetPath)) {
+    throw new Error(
+      `[Config] ${label} does not exist: ${targetPath}. ` +
+      `Set HDF5_ROOT or ${label === "HDF5 include directory" ? "HDF5_INCLUDE_DIR" : label === "HDF5 library directory" ? "HDF5_LIB_DIR" : "HDF5_DATA_DIR"} correctly.`
+    );
+  }
+};
+
+assertPathExists("HDF5 include directory", hdf5IncludeDir);
+assertPathExists("HDF5 library directory", hdf5LibDir);
+
+if (!existsSync(HDF5_DATA_DIR)) {
+  console.warn(`[Config] HDF5_DATA_DIR does not exist yet: ${HDF5_DATA_DIR}`);
+}
 
 // 2. Compile and link in-memory using Bun's native 'cc' helper
 const { symbols: h5Lib } = cc({
   source: cSourcePath,
   // 🏎️ CRITICAL LINKER STEP: Tell Bun's internal compiler to link your system's HDF5 library.
   // This matches the '-lhdf5' flag you passed to gcc previously.
-  flags: ["-I/home/roger/Software/hdf5-1_10_5/dist/include",
-          "-L/home/roger/Software/hdf5-1_10_5/dist/lib",
-          "-lhdf5"],
-library: ["hdf5"],
+  flags: [
+    `-I${hdf5IncludeDir}`,
+    `-L${hdf5LibDir}`,
+    `-l${hdf5Library}`
+  ],
+library: [hdf5Library],
   symbols: {
     check_hdf5_version: {
       returns: "int",

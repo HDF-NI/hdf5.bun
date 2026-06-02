@@ -8,6 +8,9 @@ bun install
 
 To run:
 
+Edit the .env to set native hdf5 library directory ```HDF5_ROOT``` and directory ```HDF5_DATA_DIR``` with h5 files of interest.
+
+
 ```bash
 PORT=3000
 if lsof -Pi:$PORT -sTCP:LISTEN -t >/dev/null ; then
