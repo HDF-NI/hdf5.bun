@@ -13,8 +13,8 @@ Edit the .env to set native hdf5 library directory ```HDF5_ROOT``` and data dire
 Unless you have a trusted certificate, create a cerificate with  ```mkcert localhost 127.0.0.1 ::1```
 Set the KEY & CERT
 ```
-export TLS_KEY_FILE=/home/roger/BunProjects/localhost+2-key.pem
-export TLS_CERT_FILE=/home/roger/BunProjects/localhost+2.pem
+export TLS_KEY_FILE=<your favorite place>/localhost+2-key.pem
+export TLS_CERT_FILE=<your favorite place>/localhost+2.pem
 ```
 to enable https security.
 
