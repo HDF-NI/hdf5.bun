@@ -1,6 +1,10 @@
 # dependencies (bun install)
 node_modules
 
+# deployment
+build
+dist-frontend
+
 # output
 out
 dist

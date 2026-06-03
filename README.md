@@ -10,6 +10,14 @@ To run:
 
 Edit the .env to set native hdf5 library directory ```HDF5_ROOT``` and data directory ```HDF5_DATA_DIR``` with h5 files of interest.
 
+Unless you have a trusted certificate, create a cerificate with  ```mkcert localhost 127.0.0.1 ::1```
+Set the KEY & CERT
+```
+export TLS_KEY_FILE=/home/roger/BunProjects/localhost+2-key.pem
+export TLS_CERT_FILE=/home/roger/BunProjects/localhost+2.pem
+```
+to enable https security.
+
 
 ```bash
 PORT=3000
@@ -31,6 +39,10 @@ fi
 ```
 Then have two tabbed terminals open. Run your script where the first pass brings up backend watch and the next tab the frontend.
 
-Swagger UI at ```http://localhost:3000/docs```
+Go to ```https://localhost:5173/``` defaut port.
+
+Swagger UI at ```https://localhost:3000/docs```
+
+AsyncAPI UI at ```https://localhost:3000/asyncapi```
 
 This project was created using `bun init` in bun v1.3.14. [Bun](https://bun.com) is a fast all-in-one JavaScript runtime.
