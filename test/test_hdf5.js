@@ -54,37 +54,37 @@ describe("testing c interface ", function() {
 
         test("should get member names ", () => {
             const names=file.getMemberNames();
-            expect(names.length).toBe(1n);
+            expect(names.length).toBe(1);
             expect(names[0]).toBe('pmcservices');
         });
 
-        // test("should add an attribute to the file ", () => {
-        //     file.role="Target";
-        //     file.flush();
-        // });
+        test("should add an attribute to the file ", () => {
+            file.role="Target";
+            file.flush();
+        });
 
-        // test("catch on nonexistent group open try", function(done) {
-        //   try{
-        //     //const group=file.openGroup('pmcservices');
-        //       const groupPmc=file.openGroup('pmc');
-        //       groupPmc.id.should.equal(-1);
-        //   }
-        //     catch(error) {
-        //     error.message.should.equal("Failed to read group. Group pmc doesn\'t exist.");
-        //   }
-        //   var group;
-        //   try{
-        //     group=file.openGroup('pmcservices');
-        //       const groupPmc=group.openGroup('polywog');
-        //       groupPmc.id.should.equal(-1);
-        //       groupPmc.close();
-        //   }
-        //     catch(error) {
-        //       group.close();
-        //         console.log(error.message);
-        //     error.message.should.equal("Failed to read group. Group polywog doesn\'t exist.");
-        //   }
-        // });
+        test("catch on nonexistent group open try", () => {
+          try{
+            //const group=file.openGroup('pmcservices');
+              const groupPmc=file.openGroup('pmc');
+              expect(groupPmc.id).toBe(-1);
+          }
+            catch(error) {
+            expect(error.message).toBe("Failed to read group. Group pmc doesn\'t exist.");
+          }
+          var group;
+          try{
+            group=file.openGroup('pmcservices');
+              const groupPmc=group.openGroup('polywog');
+              expect(groupPmc.id).toBe(-1);
+              groupPmc.close();
+          }
+            catch(error) {
+              group.close();
+                console.log(error.message);
+            expect(error.message).toBe("Failed to read group. Group polywog doesn\'t exist.");
+          }
+        });
         
         afterAll(() => {
           file.close();
