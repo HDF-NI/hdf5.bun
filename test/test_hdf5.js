@@ -17,46 +17,46 @@ describe("testing c interface ", function() {
             group.close();
         });
 
-        // test("reopen of pmc should be >0", () => {
-        //     const groupPmc=file.openGroup('pmc');
-        //     groupPmc.id.should.not.equal(-1);
-        //     groupPmc.close();
-        // });
+        test("reopen of pmc should be >0", () => {
+            const groupPmc=file.openGroup('pmc');
+            expect(groupPmc.id).not.toBe(-1);
+            groupPmc.close();
+        });
 
-        // test("should be >0 ", () => {
-        //     const xpathGroup=file.createGroup('pmc/Trajectories');
-        //     xpathGroup.id.should.not.equal(-1);
-        //     xpathGroup.close();
-        // });
+        test("should be >0 ", () => {
+            const xpathGroup=file.createGroup('pmc/Trajectories');
+            expect(xpathGroup.id).not.toBe(-1);
+            xpathGroup.close();
+        });
 
-        // test("initial should be >0 ", () => {
-        //     const xpathGroup=file.createGroup('pmc/Trajectories/0');
-        //     xpathGroup.id.should.not.equal(-1);
-        //     xpathGroup.close();
-        // });
+        test("initial should be >0 ", () => {
+            const xpathGroup=file.createGroup('pmc/Trajectories/0');
+            expect(xpathGroup.id).not.toBe(-1);
+            xpathGroup.close();
+        });
 
-        // test("move should be 1 ", () => {
-        //     const stemGroup=file.openGroup('pmc/Trajectories');
-        //     stemGroup.move("0", stemGroup.id, "1");
-        //     stemGroup.close();
-        // });
+        test("move should be 1 ", () => {
+            const stemGroup=file.openGroup('pmc/Trajectories');
+            stemGroup.move("0", stemGroup.getNativeId(), "1");
+            stemGroup.close();
+        });
 
-        // test("move should be pmcservices ", () => {
-        //     file.move("pmc", file.id, "pmcservices");
-        // });
+        test("move should be pmcservices ", () => {
+            file.move("pmc", file.getNativeId(), "pmcservices");
+        });
 
-        // test("should have one child of type group ", () => {
-        //     const group=file.openGroup('pmcservices');
-        //     group.getNumObjs().should.equal(2);
-        //     group.getChildType("Trajectories").should.equal(globs.H5OType.H5O_TYPE_GROUP);
-        //     group.close();
-        // });
+        test("should have one child of type group ", () => {
+            const group=file.openGroup('pmcservices');
+            expect(group.getNumObjs()).toBe(2n);
+            expect(group.getChildType("Trajectories")).toBe(globs.H5OType.H5O_TYPE_GROUP);
+            group.close();
+        });
 
-        // test("should get member names ", () => {
-        //     const names=file.getMemberNames();
-        //     names.length.should.equal(1);
-        //     names[0].should.equal('pmcservices');
-        // });
+        test("should get member names ", () => {
+            const names=file.getMemberNames();
+            expect(names.length).toBe(1n);
+            expect(names[0]).toBe('pmcservices');
+        });
 
         // test("should add an attribute to the file ", () => {
         //     file.role="Target";
