@@ -46,3 +46,10 @@ Swagger UI at ```https://localhost:3000/docs```
 AsyncAPI UI at ```https://localhost:3000/asyncapi```
 
 This project was created using `bun init` in bun v1.3.14. [Bun](https://bun.com) is a fast all-in-one JavaScript runtime.
+
+
+### Test it
+
+```bash
+bun test ./test/test_hdf5.js
+```
