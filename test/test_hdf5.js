@@ -92,47 +92,48 @@ describe("testing c interface ", function() {
 
     });
 
-    // describe("hdf5 check ", function() {
+    // describe("hdf5 check ", () => {
     //     test.skip("should be an hdf5", () => {
-    //           hdf5Lib.hdf5.isHDF5('./TRAAAAW128F429D538.h5').should.equal(true);
+    //           expect(hdf5Lib.hdf5.isHDF5('./TRAAAAW128F429D538.h5')).toBe(true);
     //     });
 
     // });
 
-    // describe("handling errors ", function() {
-    //     //let file;
-    //     beforeAll(async () => {
-    //       //file = new hdf5Lib.hdf5.File('/home/roger/Downloads/sample.h5', Access.ACC_RDONLY);
-    //     });
+    describe("handling errors ", () => {
+        //let file;
+        beforeAll(() => {
+          //file = new hdf5Lib.hdf5.File('/home/roger/Downloads/sample.h5', Access.ACC_RDONLY);
+        });
 
-    //     test("file reaad/write when it doesn't exist", () => {
-    //     try {
-    //       const file = new hdf5Lib.hdf5.File('./record.h5', globs.Access.ACC_RDWR);
-    //       const dims = file.getDatasetDimensions('infos');
-    //       file.close();
-    //       if (dims.length > 0) {
-    //       }
-    //     } catch (error) {
-    //       error.message.should.equal("File ./record.h5 doesn\'t exist.");
-    //     }
-    //     });
+        test("file reaad/write when it doesn't exist", () => {
+        try {
+          const file = new hdf5Lib.hdf5.File('./record.h5', globs.Access.ACC_RDWR);
+          const dims = file.getDatasetDimensions('infos');
+          file.close();
+          if (dims.length > 0) {
+          }
+        } catch (error) {
+          expect(error.message).toBe("HDF5 FFI Error: Failed to open or create file at ./record.h5");
+        }
+        });
         
-    //     test("should stop on broken h5", () => {
-    //         try{
-    //           console.log("stop on broken");
-    //           hdf5Lib.hdf5.isHDF5('./test/examples/broken.h5').should.equal(true);
-    //           var file = new hdf5Lib.hdf5.File('./test/examples/broken.h5', globs.Access.ACC_RDONLY);
-    //           file.close();
-    //         }catch(error){
-    //           //console.error(error);
-    //           error.message.should.equal("Failed to open file, ./test/examples/broken.h5 and flags 0 with return: -1.");
-    //         }
-    //     });
+        test("should stop on broken h5", () => {
+            try{
+              console.log("stop on broken");
+              const result = hdf5Lib.hdf5.isHDF5('./test/examples/broken.h5');
+              expect(result).toBe(true);
+              var file = new hdf5Lib.hdf5.File('./test/examples/broken.h5', globs.Access.ACC_RDONLY);
+              file.close();
+            }catch(error){
+              //console.error(error);
+              expect(error.message).toBe("HDF5 FFI Error: Failed to open or create file at ./test/examples/broken.h5");
+            }
+        });
         
-    //     afterAll(async () => {
-    //       //file.close();
-    //     });
-    // });
+        afterAll(() => {
+          //file.close();
+        });
+    });
 
 });
 
