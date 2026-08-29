@@ -1,3 +1,9 @@
+[![NPM Version][npm-image]][npm-url]
+[![NPM Downloads][downloads-image]][npm-url]
+[![Bun Version][bun-version-image]][bun-version-url]
+[![HDF5 Target Version][hdf5-version-image]][hdf5-version-url]
+[![Build Status][github-actions-image]][github-actions-url]
+
 # hdf5.bun
 
 To install dependencies:
@@ -53,3 +59,18 @@ This project was created using `bun init` in bun v1.3.14. [Bun](https://bun.com)
 ```bash
 bun test ./test/test_hdf5.js
 ```
+
+
+[npm-image]: https://shields.io
+[npm-url]: https://npmjs.com
+
+[downloads-image]: https://shields.io
+
+[bun-version-image]: https://shields.io
+[bun-version-url]: https://bun.sh
+
+[hdf5-version-image]: https://shields.io
+[hdf5-version-url]: https://hdfgroup.org
+
+[github-actions-image]: https://github.com
+[github-actions-url]: https://github.com

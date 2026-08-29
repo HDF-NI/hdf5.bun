@@ -1,105 +1,92 @@
-import { describe, beforeAll, test, expect } from "bun:test";
+import { describe, beforeAll, afterAll, test, expect } from "bun:test";
 
-import { hdf5Lib } from '../index.js';
+import { hdf5, h5im } from "../index.js";
 import globs from '../lib/globals.js';
 
-describe("testing images ",function() {
-    const hdf5   = hdf5Lib.hdf5;
-    const h5im   = hdf5Lib.h5im;
+import { Group } from "../lib/Group.js"; 
+
+describe("testing images ", () => {
 
     describe("read image and transfer",function() {
         // open hdf file
         let file;
         let file2;
         let image;
-        before(function(done) {
+        beforeAll(() => {
             try {
-            file  = new hdf5.File('./h5im.h5', Access.ACC_TRUNC);
-            file2 = new hdf5.File('./test/examples/hdf5.h5', Access.ACC_RDONLY);
-            image = h5im.readImage(file2.id, 'hdf_logo.jpg');
+            file  = new hdf5.File('./h5im.h5', globs.Access.ACC_TRUNC);
+            file2 = new hdf5.File('./test/examples/hdf5.h5', globs.Access.ACC_RDONLY);
+            image = h5im.readImage(file2.getNativeId(), 'hdf_logo.jpg');
             } catch(err) {
-                err.message.should.equal("");
+                expect(err.message).toBe("");
                 console.dir(err.message);
             }
-            done();
         });
 
-        it("should be 1.10.2 ", function(done) {
+        test("should be 1.14.6 ", () =>  {
             var version=hdf5.getLibVersion();
-            version.should.startWith('1.');
-            done();
+            expect(version).toStartWith('1.');
         });
 
+        /** @type {Group} */
         let group;
-        it("should be >0 ", function(done) {
+        test("should be >0 ", () =>   {
             group = file.createGroup('pmc');
-            group.id.should.not.equal(-1);
-            done();
+            expect(group.getNativeId()).not.toBe(-1);
         });
 
-        it("should be an image ", function(done) {
-            const res = h5im.isImage(file2.id, 'hdf_logo.jpg');
-            res.should.equal(true);
-            done();
+        test("should be an image ", () =>   {
+            const res = h5im.isImage(file2.getNativeId(), 'hdf_logo.jpg');
+            expect(res).toBe(true);
         });
 
-        it("image width should be 48 ", function(done) {
-            image.width.should.equal(48);
-            done();
+        test("image width should be 48 ", () =>   {
+            expect(image.width).toBe(48);
         });
 
-        it("image height should be 45 ", function(done) {
-            image.height.should.equal(45);
-            done();
+        test("image height should be 45 ", () =>   {
+            expect(image.height).toBe(45);
         });
 
-        it("image interlace should be INTERLACE_PIXEL ", function(done) {
-            image.interlace.should.equal('INTERLACE_PIXEL');
-            done();
+        test("image interlace should be INTERLACE_PIXEL ", () =>   {
+            expect(image.interlace).toBe('INTERLACE_PIXEL');
         });
 
-        it("image planes should be 3 ", function(done) {
-            image.planes.should.equal(3);
-            done();
+        test("image planes should be 3 ", () =>   {
+            expect(image.planes).toBe(3);
         });
 
-        it("image length should be 6480 ", function(done) {
-            image.length.should.equal(6480);
-            done();
+        test("image length should be 6480 ", () =>   {
+            expect(image.length).toBe(6480);
         });
 
-        it("make image  ", function(done) {
-            h5im.makeImage(group.id, 'hdf_logo.jpg', image);
-            done();
+        test("make image  ", () =>   {
+            h5im.makeImage(group.getNativeId(), 'hdf_logo.jpg', image);
         });
 
         let imageAgain;
-        it("again image width should be 48 ", function(done) {
-            imageAgain=h5im.readImage(group.id, 'hdf_logo.jpg');
-            imageAgain.width.should.equal(48);
-            done();
+        test("again image width should be 48 ", () =>   {
+            imageAgain=h5im.readImage(group.getNativeId(), 'hdf_logo.jpg');
+            expect(imageAgain.width).toBe(48);
         });
 
-        it("again make image  ", function(done) {
-            h5im.makeImage(group.id, 'repeat.jpg', imageAgain, {width: imageAgain.width, height: imageAgain.height, planes: imageAgain.planes});
-            done();
+        test("again make image  ", () =>   {
+            h5im.makeImage(group.getNativeId(), 'repeat.jpg', imageAgain, {width: imageAgain.width, height: imageAgain.height, planes: imageAgain.planes});
         });
 
-        it("repeat image options.width should be 48 ", function(done) {
-            let imageRepeat=h5im.readImage(group.id, 'repeat.jpg', (options) =>{
-                options.width.should.equal(48);
-                options.height.should.equal(45);
-                options.planes.should.equal(3);
-                options.interlace.should.equal('INTERLACE_PIXEL');
+        test("repeat image options.width should be 48 ", () =>   {
+            let imageRepeat=h5im.readImage(group.getNativeId(), 'repeat.jpg', (options) =>{
+                expect(options.width).toBe(48);
+                expect(options.height).toBe(45);
+                expect(options.planes).toBe(3);
+                expect(options.interlace).toBe('INTERLACE_PIXEL');
             });
-            done();
         });
 
-        after(function(done) {
-            group.close();
+        afterAll(() => {
+            group?.close();
             file.close();
             file2.close();
-            done();
         });
     });
 });
