@@ -58,6 +58,7 @@ This project was created using `bun init` in bun v1.3.14. [Bun](https://bun.com)
 
 ```bash
 bun test ./test/test_hdf5.js
+bun test ./test/test_h5im.js
 ```
 
 
