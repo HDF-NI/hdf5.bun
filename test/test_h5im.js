@@ -7,7 +7,7 @@ import { Group } from "../lib/Group.js";
 
 describe("testing images ", () => {
 
-    describe("read image and transfer",function() {
+    describe("read image and transfer", () => {
         // open hdf file
         let file;
         let file2;
@@ -16,14 +16,14 @@ describe("testing images ", () => {
             try {
             file  = new hdf5.File('./h5im.h5', globs.Access.ACC_TRUNC);
             file2 = new hdf5.File('./test/examples/hdf5.h5', globs.Access.ACC_RDONLY);
-            image = h5im.readImage(file2.getNativeId(), 'hdf_logo.jpg');
+            image = h5im.readImage(file2.id, 'hdf_logo.jpg');
             } catch(err) {
                 expect(err.message).toBe("");
                 console.dir(err.message);
             }
         });
 
-        test("should be 1.14.6 ", () =>  {
+        test("should be 1.14.6 ", () => {
             var version=hdf5.getLibVersion();
             expect(version).toStartWith('1.');
         });
@@ -32,11 +32,11 @@ describe("testing images ", () => {
         let group;
         test("should be >0 ", () =>   {
             group = file.createGroup('pmc');
-            expect(group.getNativeId()).not.toBe(-1);
+            expect(group.id).not.toBe(-1);
         });
 
         test("should be an image ", () =>   {
-            const res = h5im.isImage(file2.getNativeId(), 'hdf_logo.jpg');
+            const res = h5im.isImage(file2.id, 'hdf_logo.jpg');
             expect(res).toBe(true);
         });
 
@@ -61,21 +61,21 @@ describe("testing images ", () => {
         });
 
         test("make image  ", () =>   {
-            h5im.makeImage(group.getNativeId(), 'hdf_logo.jpg', image);
+            h5im.makeImage(group.id, 'hdf_logo.jpg', image);
         });
 
         let imageAgain;
         test("again image width should be 48 ", () =>   {
-            imageAgain=h5im.readImage(group.getNativeId(), 'hdf_logo.jpg');
+            imageAgain=h5im.readImage(group.id, 'hdf_logo.jpg');
             expect(imageAgain.width).toBe(48);
         });
 
         test("again make image  ", () =>   {
-            h5im.makeImage(group.getNativeId(), 'repeat.jpg', imageAgain, {width: imageAgain.width, height: imageAgain.height, planes: imageAgain.planes});
+            h5im.makeImage(group.id, 'repeat.jpg', imageAgain, {width: imageAgain.width, height: imageAgain.height, planes: imageAgain.planes});
         });
 
         test("repeat image options.width should be 48 ", () =>   {
-            let imageRepeat=h5im.readImage(group.getNativeId(), 'repeat.jpg', (options) =>{
+            let imageRepeat=h5im.readImage(group.id, 'repeat.jpg', (options) =>{
                 expect(options.width).toBe(48);
                 expect(options.height).toBe(45);
                 expect(options.planes).toBe(3);

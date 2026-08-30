@@ -37,12 +37,12 @@ describe("testing c interface ", function() {
 
         test("move should be 1 ", () => {
             const stemGroup=file.openGroup('pmc/Trajectories');
-            stemGroup.move("0", stemGroup.getNativeId(), "1");
+            stemGroup.move("0", stemGroup.id, "1");
             stemGroup.close();
         });
 
         test("move should be pmcservices ", () => {
-            file.move("pmc", file.getNativeId(), "pmcservices");
+            file.move("pmc", file.id, "pmcservices");
         });
 
         test("should have one child of type group ", () => {

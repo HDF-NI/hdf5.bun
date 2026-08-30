@@ -1,6 +1,7 @@
 import { File } from "./lib/File.js";
 import { Group } from "./lib/Group.js";
 import { getLibVersion, isHDF5 } from "./lib/hdf5.js";
+import { makeDataset, readDataset, readDatasetAsBuffer } from "./lib/hl/DS.js";
 import { isImage, makeImage, readImage } from "./lib/hl/Image.js";
 
 // Keep your C++ style circular reference hooks exactly as they are
@@ -17,6 +18,12 @@ export const hdf5 = {
   Group: Group,
   getLibVersion: getLibVersion,
   isHDF5: isHDF5
+};
+
+export const h5lt = {
+    makeDataset,
+    readDataset,
+    readDatasetAsBuffer
 };
 
 export const h5im = {

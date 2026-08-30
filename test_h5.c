@@ -1120,8 +1120,20 @@ long long get_native_uchar_type_id(void) {
     return (long long)H5T_NATIVE_UCHAR;
 }
 
+long long get_native_short_type_id(void) {
+    return (long long)H5T_NATIVE_SHORT;
+}
+
+long long get_native_ushort_type_id(void) {
+    return (long long)H5T_NATIVE_USHORT;
+}
+
 long long get_native_int_type_id(void) {
     return (long long)H5T_NATIVE_INT;
+}
+
+long long get_native_uint_type_id(void) {
+    return (long long)H5T_NATIVE_UINT;
 }
 
 long long get_native_float_type_id(void) {
@@ -1130,4 +1142,9 @@ long long get_native_float_type_id(void) {
 
 long long get_native_double_type_id(void) {
     return (long long)H5T_NATIVE_DOUBLE;
+}
+
+long long get_std_u8le_type_id(void) {
+    // The C compiler natively evaluates the HDF5 standard endian macro!
+    return (long long)H5T_STD_U8LE;
 }
