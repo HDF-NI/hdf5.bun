@@ -54,7 +54,7 @@ jobs:
           pwd
           mkdir -p hdf5_plugins-1.14/build
           cd hdf5_plugins-1.14
-          echo
+          echo "Whe are we?"
           ls -lastr
           ls -lastr ..
           # Explicitly bind the newly compiled HDF5_ROOT so CMake behaves
