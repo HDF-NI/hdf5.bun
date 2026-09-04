@@ -53,7 +53,9 @@ jobs:
           tar -xzf hdf5_plugins.tar.gz
           mkdir -p hdf5_plugins/build
           cd hdf5_plugins/build
-          
+          echo
+          ls -lastr
+          ls -lastr ..
           # Explicitly bind the newly compiled HDF5_ROOT so CMake behaves
           cmake -DCMAKE_BUILD_TYPE=Release \
                 -DHDF5_ROOT=${{ github.workspace }}/hdf5-install \
