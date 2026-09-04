@@ -50,8 +50,8 @@ jobs:
           # 2. Conquer the CMake Plugin Nightmare (LZ4 Support)
           # We clone the official HDFGroup plugin repo and build LZ4 specifically
           curl -L "https://github.com/HDFGroup/hdf5_plugins/releases/download/hdf5-1.14.6/hdf5_plugins-1.14.tar.gz" -o hdf5_plugins.tar.gz
-          tar -xzf hdf5_plugins.tar.gz
-          mkdir -p hdf5_plugins/build
+          tar -xzf hdf5_plugins-1.14.tar.gz
+          mkdir -p hdf5_plugins-1.14/build
           cd hdf5_plugins/build
           echo
           ls -lastr
