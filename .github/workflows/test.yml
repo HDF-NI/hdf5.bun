@@ -51,8 +51,9 @@ jobs:
           # We clone the official HDFGroup plugin repo and build LZ4 specifically
           curl -L "https://github.com/HDFGroup/hdf5_plugins/releases/download/hdf5-1.14.6/hdf5_plugins-1.14.tar.gz" -o hdf5_plugins-1.14.tar.gz
           tar -xzf hdf5_plugins-1.14.tar.gz
+          pwd
           mkdir -p hdf5_plugins-1.14/build
-          cd hdf5_plugins/build
+          cd hdf5_plugins-1.14/build
           echo
           ls -lastr
           ls -lastr ..
