@@ -53,18 +53,19 @@ jobs:
           tar -xzf hdf5_plugins-1.14.tar.gz
           pwd
           mkdir -p hdf5_plugins-1.14/build
-          cd hdf5_plugins-1.14/build
+          cd hdf5_plugins-1.14
           echo
           ls -lastr
           ls -lastr ..
           # Explicitly bind the newly compiled HDF5_ROOT so CMake behaves
-          cmake -DCMAKE_BUILD_TYPE=Release \
+          cmake -S . -B build \
+                -DCMAKE_BUILD_TYPE=Release \
+                -DH5PL_SOURCE_DIR="$PWD" \
                 -DHDF5_ROOT=${{ github.workspace }}/hdf5-install \
                 -DENABLE_LZ4=ON \
                 -DENABLE_BZIP2=OFF \
                 -DENABLE_BLOSC=OFF \
-                -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/hdf5-install/lib/plugin \
-                ..
+                -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/hdf5-install/lib/plugin 
                 
           make -j$(nproc 2>/dev/null || sysctl -n hw.ncpu)
           make install
