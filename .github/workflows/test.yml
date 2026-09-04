@@ -38,7 +38,7 @@ jobs:
           cd hdf5-build
           
           # 1. Fetch and compile HDF5 Core
-          curl -L "https://github.com{{ env.HDF5_VERSION }}/hdf5-${{ env.HDF5_VERSION }}.tar.gz" -o hdf5.tar.gz
+          curl -L "https://github.com/HDFGroup/hdf5/releases/download/hdf5_${{ env.HDF5_VERSION }}/hdf5-${{ env.HDF5_VERSION }}.tar.gz" -o hdf5.tar.gz
           tar -xzf hdf5.tar.gz
           cd hdf5-${{ env.HDF5_VERSION }}
           
@@ -49,7 +49,8 @@ jobs:
 
           # 2. Conquer the CMake Plugin Nightmare (LZ4 Support)
           # We clone the official HDFGroup plugin repo and build LZ4 specifically
-          git clone https://github.com
+          curl -L "https://github.com/HDFGroup/hdf5_plugins/releases/download/hdf5-1.14.6/hdf5_plugins-1.14.tar.gz" -o hdf5_plugins.tar.gz
+          tar -xzf hdf5_plugins.tar.gz
           mkdir -p hdf5_plugins/build
           cd hdf5_plugins/build
           
