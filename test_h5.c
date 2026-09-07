@@ -1132,6 +1132,10 @@ long long get_native_int_type_id(void) {
     return (long long)H5T_NATIVE_INT;
 }
 
+long long get_native_int8_type_id(void) {
+    return (long long)H5T_NATIVE_INT8;
+}
+
 long long get_native_uint_type_id(void) {
     return (long long)H5T_NATIVE_UINT;
 }

@@ -3,6 +3,7 @@
 [![Bun Version][bun-version-image]][bun-version-url]
 [![HDF5 Target Version][hdf5-version-image]][hdf5-version-url]
 [![Build Status][github-actions-image]][github-actions-url]
+[![Test Status](https://github.com/HDF-NI/hdf5.bun/actions/workflows/test.yml/badge.svg)](https://github.com/HDF-NI/hdf5.bun/actions/workflows/test.yml)
 
 # hdf5.bun
 
