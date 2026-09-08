@@ -1,7 +1,8 @@
 import { describe, beforeAll, afterAll, test, expect } from "bun:test";
 
-import { hdf5Lib, h5lt, h5ds } from '../index.js';
+import { hdf5Lib, hdf5, h5lt, h5ds } from '../index.js';
 import globs from '../lib/globals.js';
+import { H5Type } from '../lib/globals.js';
 
 describe("testing dimension scale interface ", () => {
 

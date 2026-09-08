@@ -1,6 +1,6 @@
 import { describe, beforeAll, afterAll, test, expect } from "bun:test";
 
-import { hdf5Lib } from '../index.js';
+import { hdf5Lib, hdf5 } from '../index.js';
 import globs from '../lib/globals.js';
 
 describe("testing fiter interface ", () => {

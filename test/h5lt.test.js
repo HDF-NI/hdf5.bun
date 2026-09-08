@@ -479,14 +479,14 @@ describe("testing lite interface ", () => {
                 const groupTargets=file.createGroup('pmcservices/sodium-icosanoate');
                 groupTargets.close();
             } catch(err) {
-                expec(err.message).toBe("");
+                expect(err.message).toBe("");
                 console.dir(err.message);
             }
             try {
                 const groupDocuments=file.createGroup('pmcservices/sodium-icosanoate/Documents');
                 groupDocuments.close();
             } catch(err) {
-                expec(err.message).toBe("");
+                expect(err.message).toBe("");
                 console.dir(err.message);
             }
 
@@ -597,7 +597,7 @@ describe("testing lite interface ", () => {
 //
             h5lt.writeDataset(group.id, 'Waldo', subsetBuffer, {start: [1,2,1], stride: [1,1,1], count: [1,3,4]});
             let theType=group.getDataType('Waldo');
-            expec(theType).toBe(H5Type.H5T_IEEE_F64LE);
+            expect(theType).toBe(H5Type.H5T_IEEE_F64LE);
             const readBuffer=h5lt.readDataset(group.id, 'Waldo');
             expect(readBuffer.constructor.name).toMatch('Float64Array');
             expect(readBuffer.length).toBe(3*8*10);

@@ -121,7 +121,7 @@ describe("testing attribute interface", () => {
 
     describe.skip("should read biom attributes", function() {
         let file;
-      before({() => {
+      beforeAll(() => {
           file = new hdf5Lib.hdf5.File('./long_attributes.biom', globs.Access.ACC_TRUNC);
         });
 
@@ -287,7 +287,7 @@ describe("testing attribute interface", () => {
 
         });
 
-        it.skip("should be reference to clock signal", () => {
+        test.skip("should be reference to clock signal", () => {
           try{
               file = new hdf5Lib.hdf5.File('./reference.h5', globs.Access.ACC_RDONLY);
             const group   = file.openGroup('Group_1');

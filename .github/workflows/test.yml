@@ -65,10 +65,8 @@ jobs:
                 -DENABLE_BZIP2=OFF \
                 -DENABLE_BLOSC=OFF \
                 -DCMAKE_PREFIX_PATH=/home/runner/work/hdf5.bun/hdf5.bun/hdf5-install \
-                -DH5PL_RESOURCES_DIR="${{ github.workspace }}/config/cmake" \
-                -DH5PL_SOURCE_DIR="${{ github.workspace }}" \
                 -DHDF5_ROOT="${{ github.workspace }}/hdf5-install" \
-                -DSTATIC_HDF5=OFF \
+                -DH5PL_SOURCE_DIR="${{ github.workspace }}/hdf5-${{ env.HDF5_VERSION }}" \                -DSTATIC_HDF5=OFF \
                 -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/hdf5-install/lib/plugin 
                 
           make -j$(nproc 2>/dev/null || sysctl -n hw.ncpu)
