@@ -61,13 +61,13 @@ jobs:
           cmake -S . -B build \
                 -DCMAKE_BUILD_TYPE=Release \
                 -DH5PL_SOURCE_DIR="$PWD" \
-                -DHDF5_ROOT=${{ github.workspace }}/hdf5-install \
                 -DENABLE_LZ4=ON \
                 -DENABLE_BZIP2=OFF \
                 -DENABLE_BLOSC=OFF \
                 -DCMAKE_PREFIX_PATH=/home/runner/work/hdf5.bun/hdf5.bun/hdf5-install \
-                -DHDF5_DIR=/home/runner/work/hdf5.bun/hdf5.bun/hdf5-install/share/cmake/hdf5 \
-                -DH5PL_RESOURCES_DIR=${{ github.workspace }}/config/cmake \
+                -DH5PL_RESOURCES_DIR="${{ github.workspace }}/config/cmake" \
+                -DH5PL_SOURCE_DIR="${{ github.workspace }}" \
+                -DHDF5_ROOT="${{ github.workspace }}/hdf5-install" \
                 -DSTATIC_HDF5=OFF \
                 -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/hdf5-install/lib/plugin 
                 
