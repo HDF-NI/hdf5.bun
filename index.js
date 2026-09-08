@@ -1,6 +1,7 @@
 import { File } from "./lib/File.js";
 import { Group } from "./lib/Group.js";
 import { PacketTable } from "./lib/hl/PacketTable.js";
+import { isScale, getScaleName, getLabel, setScale, setLabel, attachScale, detachScale, iterateScales, getNumScales, setExtent, getExtent, getName } from "./lib/hl/DimensionScale.js";
 import { getLibVersion, isHDF5 } from "./lib/hdf5.js";
 import { makeDataset, readDataset, readDatasetAsBuffer } from "./lib/hl/DS.js";
 import { isImage, makeImage, readImage } from "./lib/hl/Image.js";
@@ -45,6 +46,20 @@ export const h5pt = {
   makePacketTable
 };
 
+export const h5ds = {
+  isScale,
+  getScaleName,
+  getLabel,
+  setScale,
+  setLabel,
+  attachScale,
+  detachScale,
+  iterateScales,
+  getNumScales,
+  setExtent,
+  getExtent,
+  getName
+};
 // export const h5dt = {
 //   readTable,
 //   makeTable
@@ -56,5 +71,6 @@ export const hdf5Lib = {
     h5im,
     h5lt,
     h5tb,
-    h5pt
+    h5pt,
+    h5ds
 };

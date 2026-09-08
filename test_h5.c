@@ -1115,6 +1115,10 @@ int read_leaf_payload_json(const char *filepath, const char *leaf_path, char *ou
     return out.current_len;
 }
 
+long long get_h5t_c_s1_type_id(void) {
+    return (long long)H5T_C_S1;
+}
+
 long long get_native_uchar_type_id(void) {
     // The C compiler natively resolves the dynamic macro layout at runtime!
     return (long long)H5T_NATIVE_UCHAR;
