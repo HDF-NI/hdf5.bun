@@ -1,8 +1,11 @@
 import { File } from "./lib/File.js";
 import { Group } from "./lib/Group.js";
+import { PacketTable } from "./lib/hl/PacketTable.js";
 import { getLibVersion, isHDF5 } from "./lib/hdf5.js";
 import { makeDataset, readDataset, readDatasetAsBuffer } from "./lib/hl/DS.js";
 import { isImage, makeImage, readImage } from "./lib/hl/Image.js";
+import { readTable, makeTable } from "./lib/hl/Table.js";
+import { readPacketTable, makePacketTable } from "./lib/hl/PacketTable.js";
 
 // Keep your C++ style circular reference hooks exactly as they are
 File.GroupClassRef = Group;
@@ -32,8 +35,26 @@ export const h5im = {
     readImage
 };
 
+export const h5tb = {
+  readTable,
+  makeTable
+};
+
+export const h5pt = {
+  readPacketTable,
+  makePacketTable
+};
+
+// export const h5dt = {
+//   readTable,
+//   makeTable
+// };
+
 // This matches exactly what `import { hdf5Lib }` expects to find!
 export const hdf5Lib = {
     hdf5,
-    h5im
+    h5im,
+    h5lt,
+    h5tb,
+    h5pt
 };
