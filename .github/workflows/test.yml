@@ -18,6 +18,10 @@ jobs:
         os: [ubuntu-latest, macos-latest]
 
     steps:
+      - name: Set up Swap Space
+        uses: pierotofy/set-swap-space-action@v1.0
+        with:
+          swap-size-gb: 4 # Allocates a 4GB virtual memory buffer on disk
       - name: Checkout repository
         uses: actions/checkout@v4
 

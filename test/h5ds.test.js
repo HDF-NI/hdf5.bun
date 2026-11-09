@@ -20,7 +20,7 @@ describe("testing dimension scale interface ", () => {
             buffer.type=H5Type.H5T_NATIVE_UINT;
             buffer.rank=2;
             buffer.rows=64;
-            buffer.columns=64;
+            buffer.cols=64;
             for(let index=0;index<4096;index++) {
                 buffer.writeUInt32LE((index % 1000), index*4);
             }
@@ -57,10 +57,10 @@ describe("testing dimension scale interface ", () => {
             expect(h5ds.isAttached(group.id, 'Data', 'Y(dim)', 1)).toBe(false);
             h5ds.attachScale(group.id, 'Data', 'Y(dim)', 1);
             expect(h5ds.isAttached(group.id, 'Data', 'Y(dim)', 1)).toBe(true);
-            expect(h5ds.getNumberOfScales(group.id, 'Data', 1)).toBe(1);
+            expect(h5ds.getNumberOfScales(group.id, 'Data', 1)).toBe(1n);
             expect(h5ds.getScaleName(group.id, 'Y(dim)')).toBe("The Y Scale");
             expect(h5ds.getLabel(group.id, 'Data', 1)).toBe("");
-            expect(h5ds.setLabel(group.id, 'Data', 1, "y")).toBe(0);
+            expect(h5ds.setLabel(group.id, 'Data', 1, "y")).toBe(0n);
             expect(h5ds.getLabel(group.id, 'Data', 1)).toBe("y");
 
             try {
