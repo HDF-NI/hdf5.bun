@@ -97,7 +97,7 @@ describe("testing lite interface ", () => {
             buffer.writeDoubleLE(3.0, 40);
             h5lt.makeDataset(group.id, 'Two Rank', buffer, {type: H5Type.H5T_NATIVE_DOUBLE, rank: 2, rows: 3, columns: 2});
             var byteOrder=group.getByteOrder('Two Rank');
-            expect(byteOrder).toBe(0);
+            expect(byteOrder).toBe(0n);
             const readBuffer=h5lt.readDataset(group.id, 'Two Rank', function(options) {
                     expect(JSON.stringify(options)).toBe('{"rank":2,"endian":0,"rows":3,"columns":2}')
                 });
